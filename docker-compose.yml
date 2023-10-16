@@ -1,20 +1,7 @@
 version: '3.8'
 services:
-  db:
-    container_name: postgres
-    image: postgres:latest
-    environment:
-      - POSTGRES_PASSWORD=admin
-    ports:
-      - '5432:5432'
-    volumes:
-      - /${HOME}/data/postgres:/var/lib/postgresql/data
-    networks:
-      - postgres
-    restart: always
-
-  app:
-    container_name: api_gateway
+  api:
+    container_name: api-gateway
     build:
       context: .
       dockerfile: Dockerfile
@@ -23,18 +10,33 @@ services:
     volumes:
       - ./src:/app/src
     depends_on:
-      - db
+      - api-db
 
-  pgadmin:
-    container_name: nest-pgadmin4
+  api-db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${API_DB_USER}
+      - POSTGRES_PASSWORD=${API_DB_PASSWORD}
+      - POSTGRES_NAME=${API_DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - /${HOME}/data/postgres:/var/lib/postgresql/data
+    networks:
+      - postgres
+    restart: always
+
+  api-pgadmin:
+    container_name: api-pgadmin4
     image: dpage/pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=pgadmin4
+      - PGADMIN_DEFAULT_EMAIL=${API_PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${API_PGADMIN_PASSWORD}
     ports:
       - '8080:80'
     depends_on:
-      - db
+      - api-db
     restart: always
 
 networks:
