@@ -1,0 +1,3 @@
+[submodule "api-gateway-config"]
+	path = api-gateway-config
+	url = git@github.com:tscenping/api-gateway-config.git
