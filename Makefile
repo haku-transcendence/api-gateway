@@ -1,15 +1,10 @@
-# ARGS
-DIR = /${HOME}/data/{postgres}
-
 # CMD
 all:
-	@mkdir -p $(DIR)
-	@docker compose -f docker-compose.yml up --build -d
+	@docker-compose -f docker-compose.yml up --build -d
 .PHONY: all
 
 up:
-	@mkdir -p $(DIR)
-	@docker compose -f docker-compose.yml up -d
+	@docker-compose -f docker-compose.yml up -d
 .PHONY: up
 
 down:
