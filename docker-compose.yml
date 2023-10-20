@@ -13,7 +13,7 @@ services:
       - api-db
 
   api-db:
-    container_name: postgres
+    container_name: api-postgres
     image: postgres:latest
     env_file: ./api-gateway-config/api-gateway.env
     # environment:
