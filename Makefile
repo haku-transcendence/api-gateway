@@ -8,7 +8,7 @@ up:
 .PHONY: up
 
 down:
-	@docker compose -f docker-compose.yml down
+	@docker-compose -f docker-compose.yml down
 .PHONY: down
 
 clean:
