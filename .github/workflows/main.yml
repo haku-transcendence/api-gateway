@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Add ssh file
+      - name: Add ssh key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.API_GATEWAY_SSH }}" > ~/.ssh/id_rsa
@@ -43,7 +43,7 @@ jobs:
         id: build-image
         run: |
           docker buildx create --use --name arm64-my-builder
-          docker buildx build --platform linux/arm64,linux/arm64/v8 -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} . --push
+          docker buildx build --platform linux/arm64 -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} . --push
 
   deploy:
     needs: build
@@ -59,7 +59,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      - name: Stop and Delete container
+      - name: Stop and remove previous container
         run: |
           cd ~/api-gateway
           docker-compose down --rmi all
@@ -68,7 +68,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Restart container
+      - name: Pull image from Amazon ECR and run container
         continue-on-error: true
         run: |
           cd ~/api-gateway
