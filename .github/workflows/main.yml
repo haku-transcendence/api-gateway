@@ -85,7 +85,7 @@ jobs:
 
       - name: Pull image from Amazon ECR
         run: |
-          docker pull ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker pull ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.IMAGE_TAG }}
 
       - name: Restart container
         run: |
