@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Add ssh key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.API_GATEWAY_SSH }}" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
+      # - name: Add ssh key
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.API_GATEWAY_SSH }}" > ~/.ssh/id_rsa
+      #     chmod 400 ~/.ssh/id_rsa
 
       - name: Checkout
         uses: actions/checkout@v3
