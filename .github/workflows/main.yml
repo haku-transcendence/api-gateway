@@ -49,7 +49,7 @@ jobs:
           # docker buildx create --use --name multi-arch-builder
         # docker buildx build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} --platform linux/arm64 . --push
         run: |
-          docker build -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} .
+          docker build --platform linux/arm64/v8 -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} .
           docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }}
 
   deploy:
@@ -77,16 +77,16 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Pull image from Amazon ECR and restart container
+      - name: Stop and Delete container
         run: |
           cd ~/api-gateway
+          docker-compose down --rmi all
+          docker volume rm $(docker volume ls -q)
+
+      - name: Pull image from Amazon ECR
+        run: |
           docker pull ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          docker-compose -f docker-compose.yml down
-          docker stop $(docker ps -qa) 2>/dev/null
-          docker rm $(docker ps -qa) 2>/dev/null
-          docker rmi -f $(docker images -qa) 2>/dev/null
-          docker volume rm $(docker volume ls -q) 2>/dev/null
-          docker network rm $(docker network ls -q) 2>/dev/null
-          docker system prune -a --volume 2>/dev/null
-          docker system prune -a --force 2>/dev/null
+
+      - name: Restart container
+        run: |
           docker-compose up -d
