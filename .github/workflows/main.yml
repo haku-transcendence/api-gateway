@@ -84,8 +84,9 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Pull image from Amazon ECR
+        continue-on-error: true
         run: |
-          docker pull ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.IMAGE_TAG }}
+          docker pull ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest
 
       - name: Restart container
         run: |
