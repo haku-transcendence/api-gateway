@@ -82,7 +82,6 @@ jobs:
         run: |
           cd ~/api-gateway
           docker-compose down --rmi all
-          docker volume rm $(docker volume ls -q)
 
       - name: Pull image from Amazon ECR
         run: |
