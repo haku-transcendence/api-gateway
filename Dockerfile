@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:latest AS builder
+FROM --platform=linux/arm64 node:latest AS builder
 
 FROM node:latest
 
