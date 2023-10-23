@@ -1,6 +1,6 @@
 name: api-gateway CI/CD
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -56,6 +56,7 @@ jobs:
     needs: build
     name: CD
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Configure AWS credentials
