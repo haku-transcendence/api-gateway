@@ -66,12 +66,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      - name: Access to AWS EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_HOST }}
-          username: ${{ secrets.AWS_USERNAME }}
-          key: ${{ secrets.AWS_PRIVATE_KEY }}
+#      - name: Access to AWS EC2
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.AWS_HOST }}
+#          username: ${{ secrets.AWS_USERNAME }}
+#          key: ${{ secrets.AWS_PRIVATE_KEY }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -79,6 +79,14 @@ jobs:
 
       - name: Pull image from Amazon ECR and restart container
         run: |
+          cd ~/api-gateway
           docker pull ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          docker stop test_con && docker rm test_con
+          docker-compose -f docker-compose.yml down
+          docker stop $(docker ps -qa) 2>/dev/null
+          docker rm $(docker ps -qa) 2>/dev/null
+          docker rmi -f $(docker images -qa) 2>/dev/null
+          docker volume rm $(docker volume ls -q) 2>/dev/null
+          docker network rm $(docker network ls -q) 2>/dev/null
+          docker system prune -a --volume 2>/dev/null
+          docker system prune -a --force 2>/dev/null
           docker-compose up -d
