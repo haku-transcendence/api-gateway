@@ -90,4 +90,6 @@ jobs:
 
       - name: Restart container
         run: |
+          cd ~/api-gateway
           docker-compose up -d
+          
