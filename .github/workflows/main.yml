@@ -6,10 +6,8 @@ jobs:
   build:
     name: CI
     runs-on: ubuntu-latest
-    # environment: production
 
     steps:
-      # add ssh key
       - name: Add ssh file
         run: |
           mkdir -p ~/.ssh
@@ -43,15 +41,9 @@ jobs:
 
       - name: Docker build, tag, and push image to Amazon ECR
         id: build-image
-          # run: |
-          # export DOCKER_CLI_EXPERIMENTAL=enabled
-          # aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-          # docker buildx create --use --name multi-arch-builder
-        # docker buildx build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} --platform linux/arm64 . --push
         run: |
-          docker buildx create --use --name arm64-my-builder
-          docker buildx build --platform linux/arm64/v8 -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} . --push
-#          docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }}
+        docker buildx create --use --name arm64-my-builder
+        docker buildx build --platform linux/arm64/v8 -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} . --push
 
   deploy:
     needs: build
@@ -67,13 +59,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-#      - name: Access to AWS EC2
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.AWS_HOST }}
-#          username: ${{ secrets.AWS_USERNAME }}
-#          key: ${{ secrets.AWS_PRIVATE_KEY }}
-
       - name: Stop and Delete container
         run: |
           cd ~/api-gateway
@@ -83,13 +68,10 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Pull image from Amazon ECR
+      - name: Restart container
         continue-on-error: true
         run: |
-          docker pull ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }}
-
-      - name: Restart container
-        run: |
           cd ~/api-gateway
+          docker pull ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }}
           docker-compose up -d
           
