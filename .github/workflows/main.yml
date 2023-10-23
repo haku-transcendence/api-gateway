@@ -49,7 +49,8 @@ jobs:
           # docker buildx create --use --name multi-arch-builder
         # docker buildx build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} --platform linux/arm64 . --push
         run: |
-          docker build --platform linux/arm64/v8 -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} .
+          docker buildx create --use --name arm64-my-builder
+          docker buildx --platform linux/arm64/v8 -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }} .
           docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ secrets.ECR_IMAGE_TAG }}
 
   deploy:
