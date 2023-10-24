@@ -14,10 +14,10 @@ jobs:
       #     echo "${{ secrets.API_GATEWAY_SSH }}" > ~/.ssh/id_rsa
       #     chmod 400 ~/.ssh/id_rsa
 
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          submodules: recursive
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
 #          token: ${{ secrets.ACTION_TOKEN }} # personal token
 #
       - name: Configure AWS credentials
