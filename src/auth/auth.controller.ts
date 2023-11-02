@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthFortyTwoService } from './auth-fortytwo.service';
 import { FortyTwoUserDto } from './dto/fortytwo-user.dto';
+import { log } from 'console';
 
 @Controller('auth')
 export class AuthController {
@@ -21,5 +22,13 @@ export class AuthController {
 
     // 유저 정보를 이용해 유저를 찾는다.
     const user = await this.authService.validateUser(fortyTwoUserDto);
+    // 유저 리턴
+    return user;
+  }
+
+  @Get('sighin_redirection')
+  async signinRedirection(@Query('code') code: string) {
+    // code를 이용해 access token을 받아온다.
+    console.log('code: ', code);
   }
 }
