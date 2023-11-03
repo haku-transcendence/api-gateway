@@ -12,11 +12,11 @@ export class UsersRepository extends Repository<User> {
     super(User, dataSource.manager);
   }
 
-  async findById(id: number): Promise<User> {
-    return this.findBy({ where: { id: id } });
-  }
+  // async findById(id: number): Promise<User> {
+  //   return this.findOne({ where: { id: id } });
+  // }
 
   async findByEmail(email: string): Promise<User> {
-    return this.findBy({ where: { email: email } });
+    return this.findOne({ where: { email: email } });
   }
 }

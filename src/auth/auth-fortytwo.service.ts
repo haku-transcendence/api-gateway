@@ -14,7 +14,7 @@ export class AuthFortyTwoService {
         {
           grant_type: 'authorization_code',
           client_id: process.env.FORTYTWO_CLIENT_ID,
-          client_secret: process.env.FORTYTWO_CLIEND_SECRET,
+          client_secret: process.env.FORTYTWO_CLIENT_SECRET,
           code,
           redirect_uri: process.env.FORTYTWO_REDIRECT_URI,
         },
@@ -43,6 +43,7 @@ export class AuthFortyTwoService {
         nickname: response.data.login,
         email: response.data.email,
       };
+      this.logger.debug(userData);
       return userData;
     } catch (error) {
       this.logger.error(error);
